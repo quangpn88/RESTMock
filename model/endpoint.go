@@ -6,26 +6,20 @@ type Endpoint struct {
 	Id        string
 	ProjectId string
 	Path      string
-	Scenarios []Scenario
 }
 
-func (endpoint *Endpoint) createScenarioGET(headerFilters []KeyValue, queryParameters []KeyValue, httpCode int, responseHeaders []KeyValue, responseBody string, name string, description string, ) Scenario {
-	scenario := Scenario{}
-	scenario.Id = uuid.NewV4().String()
-	scenario.EndpointId = endpoint.Id
-	scenario.Method = GET
-	scenario.Name = name
-	scenario.Description = description
-
-	requestFilter := RequestFilter{}
-	requestFilter.HeaderFilters = headerFilters
-	requestFilter.QueryParameters = queryParameters
-	scenario.RequestFilter = requestFilter
-
-	response := Response{}
-	response.Body = responseBody
-	response.Header = responseHeaders
-	response.HttpCode = httpCode
-	scenario.Response = response
-	return scenario
+func (endpoint *Endpoint) createScenarioGET(headerFilters []KeyValue, queryParameters []KeyValue, httpCode int, responseHeaders []KeyValue, responseBody string, name string, description string) (scenario Scenario) {
+	scenarioBuilder := ScenarioBuilder{}
+	scenario, _ = scenarioBuilder.
+		Id(uuid.NewV4().String()).
+		EndpointId(endpoint.Id).
+		Method(GET).Name(name).
+		Description(description).
+		HeaderFilters(headerFilters).
+		QueryParameters(queryParameters).
+		ResponseBody(responseBody).
+		ResponseHeaders(responseHeaders).
+		ResponseHttpCode(httpCode).
+		BuildScenario()
+	return
 }
